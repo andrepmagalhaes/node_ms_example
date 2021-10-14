@@ -1,0 +1,16 @@
+version: "3.2"
+services:
+  rabbitmq:
+    image: rabbitmq:3.9.7-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - ${RABBITMQ_PORT}:5672
+    volumes:
+        - $PWD/rabbitmq/data/var/lib/rabbitmq/
+        - $PWD/rabbitmq/log/var/log/rabbitmq
+    networks:
+        - codeby_rabbitmq
+
+networks:
+  codeby_rabbitmq:
+    driver: bridge
