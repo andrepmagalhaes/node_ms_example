@@ -1,6 +1,5 @@
 const req = require("supertest");
 const server = require("../../products-service/src/server");
-//const params = require("./params");
 
 const params = {
     accountName: "apiexamples",
@@ -17,7 +16,7 @@ describe('products-service integration test', () => {
         })
         .expect('Content-Type', /json/)
         .expect(200)
-        .then((res) => {
+        .then((res:any) => {
            expect(res.body).toEqual(
                expect.objectContaining({
                    msg: expect("Email sent")

@@ -5,7 +5,7 @@ import amqp from 'amqplib';
 
 class App {
     private app:express.Application;
-    private queueConnection;
+    private queueConnection:Promise<amqp.Connection | undefined>;
 
     constructor(port:number, routes:Array<route>)
     {
