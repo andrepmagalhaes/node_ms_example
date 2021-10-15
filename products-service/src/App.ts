@@ -1,6 +1,7 @@
 import express from 'express'
 import { route } from './types'
 import amqp from 'amqplib';
+import * as controllers from './controllers'
 
 
 class App {

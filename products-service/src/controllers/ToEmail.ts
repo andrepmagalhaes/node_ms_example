@@ -1,18 +1,16 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { route } from "../types";
 import { Connection } from 'amqplib'
-import { getData } from "../helpers";
+import { getData as requestFromApi } from "../helpers";
+import { Controller } from './Controller'
 
-class ToEmail implements route
+export class ToEmail extends Controller implements route
 {
-    private router:Router = Router();
     private path:string = '/toEmail';
-    private queueConnection:Connection;
 
-    constructor(queueConnection: Connection)
+    constructor(queueConnection:Connection)
     {
-        this.queueConnection = queueConnection;
-        this.initRoutes();
+        super(queueConnection);
     }
 
     private async productsToEmail(req:Request, res:Response, next:NextFunction)
@@ -22,26 +20,30 @@ class ToEmail implements route
             targetEmail: req.body.targetEmail
         }
 
-        getData(params.path, {
+        requestFromApi(params.path, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
-        }).then((res:any) => {
-            
-        })
-        
+        }).then((data:any) => {
+            if((data.status == 200) || (data.status == 206))
+            {
+
+            }
+
+            return res.status(data.status).json(`Error ${data.status}`)
+        });  
     }
 
-    private initRoutes()
+    protected initRoutes():void
     {
-
+        super.getRouter().get(this.path, this.productsToEmail);
     }
 
     public getRouter():Router
     {
-        return this.router;
+        return super.getRouter();
     }
 
     public getPath():string
