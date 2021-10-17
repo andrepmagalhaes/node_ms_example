@@ -1,4 +1,4 @@
-#Como rodar
+# Como rodar
 
 - necessário docker e docker-compose
 
