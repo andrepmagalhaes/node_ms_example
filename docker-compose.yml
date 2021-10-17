@@ -1,16 +1,57 @@
 version: "3.2"
 services:
   rabbitmq:
-    image: rabbitmq:3.9.7-alpine
+    image: rabbitmq:3.9.7-management-alpine
     container_name: 'rabbitmq'
     ports:
+        - ${RABBITMQ_PANEL_PORT}:15672
         - ${RABBITMQ_PORT}:5672
     volumes:
         - $PWD/rabbitmq/data/var/lib/rabbitmq/
         - $PWD/rabbitmq/log/var/log/rabbitmq
     networks:
-        - codeby_rabbitmq
+        - teste-codeby
+    environment:
+        - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+        - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+
+  products-api:
+    build:
+      context: ./products-api
+      dockerfile: Dockerfile
+      args:
+        - RABBITMQ_HOST=${RABBITMQ_HOST}
+        - RABBITMQ_PORT=${RABBITMQ_PORT}
+        - RABBITMQ_USER=${RABBITMQ_USER}
+        - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+        - RABBITMQ_SEND_EMAIL_QUEUE=${RABBITMQ_SEND_EMAIL_QUEUE}
+        - PRODUCTS_API_PORT=${PRODUCTS_API_PORT}
+    image: teste-codeby-products-api
+    container_name: 'products-api'
+    ports:
+      - ${PRODUCTS_API_PORT}:8080
+    networks:
+        - teste-codeby
+  
+  mail-service:
+    build:
+      context: ./mail-service
+      dockerfile: Dockerfile
+      args:
+        - RABBITMQ_HOST=${RABBITMQ_HOST}
+        - RABBITMQ_PORT=${RABBITMQ_PORT}
+        - RABBITMQ_USER=${RABBITMQ_USER}
+        - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+        - RABBITMQ_SEND_EMAIL_QUEUE=${RABBITMQ_SEND_EMAIL_QUEUE}
+    image: teste-codeby-mail-service
+    container_name: 'mail-service'
+    ports:
+      - ${MAIL_SERVICE_PORT}:8000
+    depends_on:
+      - 'rabbitmq'      
+    networks:
+        - teste-codeby
 
 networks:
-  codeby_rabbitmq:
+  teste-codeby:
     driver: bridge
