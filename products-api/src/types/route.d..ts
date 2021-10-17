@@ -13,6 +13,5 @@ interface initRoutes {
 }
 
 export interface route{
-    getRouter:getRouter,
-    getPath:getPath
+    getRouter:getRouter
 }
