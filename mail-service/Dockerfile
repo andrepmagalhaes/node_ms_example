@@ -1,6 +1,8 @@
 #build
 FROM node:lts-alpine as builder
 
+LABEL stage=builder
+
 WORKDIR /usr/app
 
 COPY package*.json ./
